@@ -23,21 +23,21 @@ No special configuration is needed in Apache, as OS X Apache works out of the bo
 2. Edit `/etc/apache2/httpd.conf` (copy it from `httpd.conf.default` if it does not exist) and uncomment the line:
 
 ```
-    Include /private/etc/apache2/extra/httpd-vhosts.conf
+		Include /private/etc/apache2/extra/httpd-vhosts.conf
 ```
 3. Edit /etc/apache2/extra/http-vhosts.conf and comment out all dummy virtual hosts. Define the default virtual host as follows:
 
 ```
-    <VirtualHost *:80>
-      DocumentRoot "/Library/WebServer/Documents"
-      ServerName localhost
-    </VirtualHost>`
+		<VirtualHost *:80>
+			DocumentRoot "/Library/WebServer/Documents"
+			ServerName localhost
+		</VirtualHost>`
 ```
 
 And add a directive similar to the following:
 
 ```
-    Include /etc/apache2/vhosts/*.conf
+		Include /etc/apache2/vhosts/*.conf
 ```
 
 The above will be the directory where virtual host configuration files will go. The path is arbitrary, but it must exist. In this example, all virtual hosts configuration files are assumed to be in /etc/apache2/vhosts.
@@ -51,15 +51,15 @@ The above will be the directory where virtual host configuration files will go. 
 Edit /etc/apache2/extra/httpd-ssl.conf and, under the “SSL Virtual Host Context” section, add the following:
 
 ```
-    NameVirtualHost *:443
-    SSLStrictSNIVHostCheck off
+		NameVirtualHost *:443
+		SSLStrictSNIVHostCheck off
 ```
 and replace `<VirtualHost _default_:443>` with `<VirtualHost *:443>`.
 
 Test the configuration with `apachectl configtest`, then restart Apache. If all is fine, in the Apache's error log (which you can access from the Console app) you should read the following message:
 
 ```
-    [warn] Init: Name-based SSL virtual hosts only work for clients with TLS server name indication support (RFC 4366)
+		[warn] Init: Name-based SSL virtual hosts only work for clients with TLS server name indication support (RFC 4366)
 ```
 
 ## Enabling support for FastCGI
@@ -69,8 +69,8 @@ For PHP-FPM to work with OS X built-in Apache, you need to install mod_fastcgi. 
 To install the formula, type the following commands:
 
 ```
-    brew pull https://github.com/mxcl/homebrew/pull/12093
-    brew install mod_fastcgi
+		brew pull https://github.com/mxcl/homebrew/pull/12093
+		brew install mod_fastcgi
 ```
 
 Then follow the onscreen instructions to configure Apache to use mod_fastcgi.
@@ -80,7 +80,7 @@ Then follow the onscreen instructions to configure Apache to use mod_fastcgi.
 Refer to https://github.com/josegonzalez/homebrew-php. You will need to add --with-fpm when you install the formula, e.g.
 
 ```
-    brew install php54 --with-fpm
+		brew install php54 --with-fpm
 ```
 
 ## Configuring PHP-FPM
@@ -94,46 +94,46 @@ If you want PHP-FPM to listen on a Unix socket instead of a TCP socket (see the 
 You may check that PHP-FPM is configured correctly by running the following:
 
 ```
-    php-fpm -y $HOMEBREW_PREFIX/etc/php/5.4/php-fpm.conf -t
+		php-fpm -y $HOMEBREW_PREFIX/etc/php/5.4/php-fpm.conf -t
 ```
 
 You are now ready to make your first virtual host using PHP-FPM! Create an Apache virtual host configuration file in /etc/apache2/vhosts (or wherever your virtual host configuration files should be located), whose content will be similar to the following:
 
 ```
-    <VirtualHost *:80>
-      ServerName HOSTNAME
-      DocumentRoot /Library/WebServer/HOSTNAME
+		<VirtualHost *:80>
+			ServerName HOSTNAME
+			DocumentRoot /Library/WebServer/HOSTNAME
 
-      <Directory "/Library/WebServer/HOSTNAME">
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Order allow,deny
-        Allow from all
-      </Directory>
+			<Directory "/Library/WebServer/HOSTNAME">
+				Options Indexes FollowSymLinks
+				AllowOverride All
+				Order allow,deny
+				Allow from all
+			</Directory>
 
-      # Ensure that mod_php5 is off
-      <IfModule mod_php5.c>
-          php_admin_flag engine off
-      </IfModule>
+			# Ensure that mod_php5 is off
+			<IfModule mod_php5.c>
+					php_admin_flag engine off
+			</IfModule>
 
-      <IfModule mod_fastcgi.c>
-          AddHandler php-fastcgi .php
-          Action php-fastcgi /php-fpm
-          Alias /php-fpm /Library/WebServer/HOSTNAME.fcgi
-          # If PHP-FPM is configured to listen on a Unix socket, use this:
-          FastCGIExternalServer /Library/WebServer/HOSTNAME.fcgi -socket /tmp/php-fpm.sock
-          # Otherwise, use this:
-          #FastCGIExternalServer /Library/WebServer/HOSTNAME.fcgi -host 127.0.0.1:9000
+			<IfModule mod_fastcgi.c>
+					AddHandler php-fastcgi .php
+					Action php-fastcgi /php-fpm
+					Alias /php-fpm /Library/WebServer/HOSTNAME.fcgi
+					# If PHP-FPM is configured to listen on a Unix socket, use this:
+					FastCGIExternalServer /Library/WebServer/HOSTNAME.fcgi -socket /tmp/php-fpm.sock
+					# Otherwise, use this:
+					#FastCGIExternalServer /Library/WebServer/HOSTNAME.fcgi -host 127.0.0.1:9000
 
-          # Without the following directive, you'll get an Access Forbidden error
-          # when the path aliased by /php-fpm is not under the document root:
-          <Location /php-fpm>
-              Order Deny,Allow
-              Deny from all
-              Allow from env=REDIRECT_STATUS
-          </Location>
-      </IfModule>
-    </VirtualHost>
+					# Without the following directive, you'll get an Access Forbidden error
+					# when the path aliased by /php-fpm is not under the document root:
+					<Location /php-fpm>
+							Order Deny,Allow
+							Deny from all
+							Allow from env=REDIRECT_STATUS
+					</Location>
+			</IfModule>
+		</VirtualHost>
 ```
 
 The above assumes that virtual hosts are inside directories under /Library/WebServer: change this path according to your needs (for example, I keep my virtual hosts under /Users/lifepillar/VirtualHosts). Replace HOSTNAME with the host name. Note that **HOSTNAME.fcgi does not have to exist**. The FastCGIExternalServer directive forwards all the requests hitting /Library/WebServer/HOSTNAME.fcgi to the external application (php-fpm, in this case) via a socket (unix or tcp).
@@ -141,19 +141,19 @@ The above assumes that virtual hosts are inside directories under /Library/WebSe
 Create the /Library/WebServer/HOSTNAME folder and throw some PHP script in it. A file called info.php with the following content will do:
 
 ```php
-    <?php phpinfo() ?>
+		<?php phpinfo() ?>
 ```
 
 Do not forget to add the virtual host to /etc/hosts. Edit /etc/hosts and add the following line:
 
 ```
-    127.0.0.1   HOSTNAME
+		127.0.0.1	 HOSTNAME
 ```
 
 Start php-fpm directly from the command line (for debugging):
 
 ```
-    php-fpm --fpm-config $HOMEBREW_PREFIX/etc/php/5.4/php-fpm.conf
+		php-fpm --fpm-config $HOMEBREW_PREFIX/etc/php/5.4/php-fpm.conf
 ```
 
 Then restart Apache to enable the virtual host. Keep an eye on the Apache error log through the Console app to ensure that there are no errors. Then visit http://HOSTNAME/info.php. If all is fine, you should see a page of information about PHP. In the “Server API” field, you should read “FPM/FastCGI”.
@@ -163,51 +163,51 @@ If all is fine, you may kill php-fpm and launch it as a launchd daemon. Since PH
 For the sake of completeness, here is a corresponding configuration file for HTTPS (this assumes that you have enabled SSL name-based virtual hosting as explained at the beginning of this document):
 
 ```
-    <VirtualHost *:443>
-      ServerName HOSTNAME
-      DocumentRoot /Library/WebServer/HOSTNAME
+		<VirtualHost *:443>
+			ServerName HOSTNAME
+			DocumentRoot /Library/WebServer/HOSTNAME
 
-      <Directory "/Library/WebServer/HOSTNAME">
-        Options Indexes FollowSymLinks
-        AllowOverride All
-        Order allow,deny
-        Allow from all
-      </Directory>
+			<Directory "/Library/WebServer/HOSTNAME">
+				Options Indexes FollowSymLinks
+				AllowOverride All
+				Order allow,deny
+				Allow from all
+			</Directory>
 
-      <IfModule php5_module>
-        php_admin_flag engine off
-      </IfModule>
+			<IfModule php5_module>
+				php_admin_flag engine off
+			</IfModule>
 
-      <IfModule mod_fastcgi.c>
-        AddHandler php-fastcgi .php
-        Action php-fastcgi /php-fpm
-        Alias /php-fpm /Library/WebServer/HOSTNAME.fcgi
-      </IfModule>
+			<IfModule mod_fastcgi.c>
+				AddHandler php-fastcgi .php
+				Action php-fastcgi /php-fpm
+				Alias /php-fpm /Library/WebServer/HOSTNAME.fcgi
+			</IfModule>
 
-      <Location /php-fpm>
-        Order Deny,Allow
-        Deny from all
-        Allow from env=REDIRECT_STATUS
-      </Location>
+			<Location /php-fpm>
+				Order Deny,Allow
+				Deny from all
+				Allow from env=REDIRECT_STATUS
+			</Location>
 
-      # From here, standard SSL-related stuff
-      SSLEngine on
-      SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
-      SSLCertificateFile "/etc/apache2/certs/HOSTNAME.crt"
-      SSLCertificateKeyFile "/etc/apache2/keys/HOSTNAME.key"
-      #SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
-      <FilesMatch "\.(cgi|shtml|phtml|php)$">
-        SSLOptions +StdEnvVars
-      </FilesMatch>
-      BrowserMatch ".*MSIE.*" \
-         nokeepalive ssl-unclean-shutdown \
-         downgrade-1.0 force-response-1.0
-    </VirtualHost>
+			# From here, standard SSL-related stuff
+			SSLEngine on
+			SSLCipherSuite ALL:!ADH:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP:+eNULL
+			SSLCertificateFile "/etc/apache2/certs/HOSTNAME.crt"
+			SSLCertificateKeyFile "/etc/apache2/keys/HOSTNAME.key"
+			#SSLOptions +FakeBasicAuth +ExportCertData +StrictRequire
+			<FilesMatch "\.(cgi|shtml|phtml|php)$">
+				SSLOptions +StdEnvVars
+			</FilesMatch>
+			BrowserMatch ".*MSIE.*" \
+				 nokeepalive ssl-unclean-shutdown \
+				 downgrade-1.0 force-response-1.0
+		</VirtualHost>
 ```
 **Important:** Note that the line
 
 ```
-    Alias /php-fpm /Library/WebServer/HOSTNAME.fcgi
+		Alias /php-fpm /Library/WebServer/HOSTNAME.fcgi
 ```
 
 is exactly the same in both configurations, but the FastCGIExternalServer directive **must** appear only in one of them.
@@ -217,17 +217,17 @@ is exactly the same in both configurations, but the FastCGIExternalServer direct
 Let us dissect the essential parts of the virtual host configuration:
 
 ```
-    AddHandler php-fastcgi .php
+		AddHandler php-fastcgi .php
 ```
 The AddHandler directive tells that files ending in .php should be handled by a handler called “php-fastcgi” (this name is arbitrary).
 
 ```
-    Action php-fastcgi /php-fpm
+		Action php-fastcgi /php-fpm
 ```
 The Action directive defines the handler called “php-fastcgi” to point to a (non-existent) script called “php-fpm” (again, the name is arbitrary).
 
 ```
-    Alias /php-fpm /Library/WebServer/HOSTNAME.fcgi
+		Alias /php-fpm /Library/WebServer/HOSTNAME.fcgi
 ```
 The Alias directive defines the path /php-fpm to point to another path. This is the path that triggers the FastCGIExternalServer directive to forward the request to PHP-FPM. The way this path is chosen is very important, because PHP-FPM will not work unless the path satisfies some constraints. Let me try to explain. In principle, the path may be any “virtual” path (i.e., not existing in the file system), but it turns out (read this thread: http://www.fastcgi.com/archives/fastcgi-developers/2010-September/000594.html) that if the path contains slashes (apart from the leading slash), it won't work unless it is a real path (existing in the file system) accessible by Apache (e.g., /Library/WebServer). Confused? Well, I've spent days trying to figure out. If the alias is /some/path/to/HOSTNAME.fcgi then (1) /some/path/to/ must exist and (2) Apache must be “aware” of it. For example, since OS X Apache's DocumentRoot is set to /Library/WebServer/Documents, these aliases will all work: /HOSTNAME.fcgi (no slashes but the leading slash), /Library/HOSTNAME.fcgi, /Library/WebServer/HOSTNAME.fcgi, /Library/WebServer/Documents/HOSTNAME.fcgi (note, again, that HOSTNAME.fcgi itself does not have to exist in the file system). Note that such paths will work independent of the virtual host's DocumentRoot. If the virtual host's document root is set to /some/path/to/HOSTNAME then these will work, too (provided that /some/path/to exists): /some/HOSTNAME.fcgi, /some/path/HOSTNAME.fcgi, and /some/path/to/HOSTNAME.fcgi. However, /Library/WebServer/Documents/foo/HOSTNAME.fcgi will raise a `Not Found` error, unless the foo directory exists (it may be just an empty folder), and /some/path/to/foo/HOSTNAME.fcgi will raise an `Internal Server Error (Request exceeded the limit of 10 internal redirects due to probable configuration error)`.
 

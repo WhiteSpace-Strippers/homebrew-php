@@ -37,9 +37,9 @@ Please include the following information in your bug report:
 - Homebrew Version: `brew -v`
 - PHP Version in use: stock-apple, homebrew-php stable, homebrew-php devel, homebrew-php head, custom
 - XCode Version: 4.4, 4.3, 4.0, 3 etc.
-  - If you are on Mountain Lion `10.8.x`, please also upgrade to the latest XCode, 4.4.
-  - If using 4.3, verify whether you have the `Command Line Tools` installed as well
-  - If on Snow Leopard, you may want to install the [`OS X GCC Installer`](https://github.com/kennethreitz/osx-gcc-installer/)
+	- If you are on Mountain Lion `10.8.x`, please also upgrade to the latest XCode, 4.4.
+	- If using 4.3, verify whether you have the `Command Line Tools` installed as well
+	- If on Snow Leopard, you may want to install the [`OS X GCC Installer`](https://github.com/kennethreitz/osx-gcc-installer/)
 - Output of `gcc -v`
 - Output of `php -v`
 - Output of `brew install -V path/to/homebrew-php/the-formula-you-want-to-test.rb --with-your --opts-here` within a [gist](http://gist.github.com). Please append any options you added to the `brew install` command.
@@ -71,29 +71,29 @@ _[Brew Tap]_
 
 Setup the `homebrew/dupes` tap which has dependencies we need:
 
-    brew tap homebrew/dupes
+		brew tap homebrew/dupes
 
 Then, run the following in your commandline:
 
-    brew tap josegonzalez/homebrew-php
+		brew tap josegonzalez/homebrew-php
 
 ## Usage
 
 Tap the `homebrew/dupes` repository into your brew installation:
 
-    brew tap homebrew/dupes
+		brew tap homebrew/dupes
 
 Tap the repository into your brew installation:
 
-    brew tap josegonzalez/homebrew-php
+		brew tap josegonzalez/homebrew-php
 
 **Note:** For a list of available configuration options run:
 
-    brew options php54
+		brew options php54
 
 Then install php53, php54, or any formulae you might need:
 
-    brew install php54
+		brew install php54
 
 That's it!
 
@@ -105,25 +105,25 @@ Using multiple PHP versions from `homebrew-php` is pretty straightforward.
 
 If using Apache, you will need to update the `LoadModule` call. For convenience, simply comment out the old PHP version:
 
-    # /etc/apache2/httpd.conf
-    # Swapping from PHP53 to PHP54
-    # $HOMEBREW_PREFIX is normally `/usr/local`
-    # LoadModule php5_module    $HOMEBREW_PREFIX/Cellar/php53/5.3.20/libexec/apache2/libphp5.so
-    LoadModule php5_module    $HOMEBREW_PREFIX/Cellar/php54/5.4.10/libexec/apache2/libphp5.so
+		# /etc/apache2/httpd.conf
+		# Swapping from PHP53 to PHP54
+		# $HOMEBREW_PREFIX is normally `/usr/local`
+		# LoadModule php5_module		$HOMEBREW_PREFIX/Cellar/php53/5.3.20/libexec/apache2/libphp5.so
+		LoadModule php5_module		$HOMEBREW_PREFIX/Cellar/php54/5.4.10/libexec/apache2/libphp5.so
 
 If using FPM, you will need to unload the `plist` controlling php, or manually stop the daemon, via your command line:
 
-    # Swapping from PHP53 to PHP54
-    # $HOMEBREW_PREFIX is normally `/usr/local`
-    cp $HOMEBREW_PREFIX/Cellar/php54/5.4.10/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
-    launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
-    launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
+		# Swapping from PHP53 to PHP54
+		# $HOMEBREW_PREFIX is normally `/usr/local`
+		cp $HOMEBREW_PREFIX/Cellar/php54/5.4.10/homebrew-php.josegonzalez.php54.plist ~/Library/LaunchAgents/
+		launchctl unload -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php53.plist
+		launchctl load -w ~/Library/LaunchAgents/homebrew-php.josegonzalez.php54.plist
 
 If you would like to swap the PHP you use on the command line, you should update the `$PATH` variable in either your `.bashrc` or `.bash_profile`:
 
-    # Swapping from PHP53 to PHP54
-    # export PATH="$(brew --prefix josegonzalez/php/php53)/bin:$PATH"
-    export PATH="$(brew --prefix josegonzalez/php/php54)/bin:$PATH"
+		# Swapping from PHP53 to PHP54
+		# export PATH="$(brew --prefix josegonzalez/php/php53)/bin:$PATH"
+		export PATH="$(brew --prefix josegonzalez/php/php54)/bin:$PATH"
 
 Please be aware that you must make this type of change EACH time you swap between PHP `minor` versions. You will typically only need to update the Apache/FPM when upgrading your php `patch` version.
 
@@ -131,11 +131,11 @@ Please be aware that you must make this type of change EACH time you swap betwee
 
 If installing `php53` or `php54`, please note that all extensions installed with the included `pear` will be installed to the respective php's bin path. For example, supposing you installed `PHP_CodeSniffer` as follows:
 
-    pear install PHP_CodeSniffer
+		pear install PHP_CodeSniffer
 
 It would be nice to be able to use the `phpcs` command via commandline, or other utilities. You will need to add the installed php's `bin` directory to your path. The following would be added to your `.bashrc` or `.bash_profile` when running the `php54` brew:
 
-    export PATH="$(brew --prefix php54)/bin:$PATH"
+		export PATH="$(brew --prefix php54)/bin:$PATH"
 
 Some caveats:
 
@@ -160,29 +160,29 @@ PHP Extensions MUST be prefixed with `phpVERSION`. For example, instead of the `
 
 The template for the `php54-example` pecl extension would be as follows. Please use it as an example for any new extension formulae:
 
-    require File.join(File.dirname(__FILE__), 'abstract-php-extension')
+		require File.join(File.dirname(__FILE__), 'abstract-php-extension')
 
-    class Php54Example < AbstractPhp54Extension
-      init
-      homepage 'http://pecl.php.net/package/example'
-      url 'http://pecl.php.net/get/example-1.0.tgz'
-      sha1 'SOMEHASHHERE'
-      version '1.0'
-      head 'https://svn.php.net/repository/pecl/example/trunk', :using => :svn
+		class Php54Example < AbstractPhp54Extension
+			init
+			homepage 'http://pecl.php.net/package/example'
+			url 'http://pecl.php.net/get/example-1.0.tgz'
+			sha1 'SOMEHASHHERE'
+			version '1.0'
+			head 'https://svn.php.net/repository/pecl/example/trunk', :using => :svn
 
-      def install
-        Dir.chdir "example-#{version}" unless build.head?
+			def install
+				Dir.chdir "example-#{version}" unless build.head?
 
-        ENV.universal_binary if build.universal?
+				ENV.universal_binary if build.universal?
 
-        safe_phpize
-        system "./configure", "--prefix=#{prefix}",
-                              phpconfig
-        system "make"
-        prefix.install "modules/example.so"
-        write_config_file unless build.include? "without-config-file"
-      end
-    end
+				safe_phpize
+				system "./configure", "--prefix=#{prefix}",
+															phpconfig
+				system "make"
+				prefix.install "modules/example.so"
+				write_config_file unless build.include? "without-config-file"
+			end
+		end
 
 Defining extensions inheriting AbstractPhp5(34)Extension will provide a `write_config_file` which add `ext-{extension}.ini` to `conf.d`, don’t forget to remove it manually upon extension removal. Please see [AbstractPhpExtension.rb](Formula/AbstractPhpExtension.rb) for more details.
 

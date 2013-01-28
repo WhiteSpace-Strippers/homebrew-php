@@ -1,27 +1,27 @@
 require 'formula'
 
 class Phplint < Formula
-  homepage 'http://www.icosaedro.it/phplint/'
-  url 'http://www.icosaedro.it/phplint/phplint-pure-c-1.1_20120402.tar.gz'
-  sha256 '7027bf0a4e676ddd53c7b4bf7707a0773baab6565b2a1541f5e5ba1d2694e08c'
-  version '1.1'
+	homepage 'http://www.icosaedro.it/phplint/'
+	url 'http://www.icosaedro.it/phplint/phplint-pure-c-1.1_20120402.tar.gz'
+	sha256 '7027bf0a4e676ddd53c7b4bf7707a0773baab6565b2a1541f5e5ba1d2694e08c'
+	version '1.1'
 
-  def patches
-    # Rationale: The ./configure tosses up errors that can be ignored, but homebrew
-    #     still catches them, so I've just patched in the file that gets created.
-    #     As for phpl, it's useful because it includes the default modules with
-    #     --modules-path, but the default options are WAY too verbose.
-    DATA
-  end
+	def patches
+		# Rationale: The ./configure tosses up errors that can be ignored, but homebrew
+		#		 still catches them, so I've just patched in the file that gets created.
+		#		 As for phpl, it's useful because it includes the default modules with
+		#		 --modules-path, but the default options are WAY too verbose.
+		DATA
+	end
 
-  def install
-    ENV.llvm
-    # See: http://www.icosaedro.it/phplint/download.html (Note 1)
-    system "#{ENV.cc} -fnested-functions src/phplint.c -o src/phplint"
-    bin.install 'src/phplint'
-    bin.install 'phpl'
-    prefix.install 'modules'
-  end
+	def install
+		ENV.llvm
+		# See: http://www.icosaedro.it/phplint/download.html (Note 1)
+		system "#{ENV.cc} -fnested-functions src/phplint.c -o src/phplint"
+		bin.install 'src/phplint'
+		bin.install 'phpl'
+		prefix.install 'modules'
+	end
 end
 
 __END__
